@@ -1,11 +1,23 @@
 <script>
-// a class representing a dependency
-// exposing it on window is necessary for testing
-window.Dep = class Dep {
-  // Implement this!
-}
+  // a class representing a dependency
+  // exposing it on window is necessary for testing
+  window.Dep = class Dep {
+    // Implement this!
+    constructor() {
+      this.subscribers = new Set()
+    }
+    depend() {
+      this.subscribers.add(fn)
+    } //收集订阅
+    notify() {
+      this.subscribers.forEach(sub => sub())
+    } //发布订阅
+  }
 
-function autorun (update) {
-  // Implement this!
-}
+  let fn
+  function autorun(update) {
+    // Implement this!
+    fn = update
+    update()
+  }
 </script>
