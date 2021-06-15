@@ -1,30 +1,46 @@
 <script src="../node_modules/vue/dist/vue.js"></script>
 
 <div id="app">
-  <component :is="matchedComponent"></component>
+  <!-- <component :is="matchedComponent"></component>
   <a href="#foo">foo</a>
-  <a href="#bar">bar</a>
+  <a href="#bar">bar</a> -->
 </div>
 
 <script>
-// '#/foo' -> Foo
-// '#/bar' -> Bar
-// '#/404' -> NotFound
+  // '#/foo' -> Foo
+  // '#/bar' -> Bar
+  // '#/404' -> NotFound
 
-const Foo = { template: `<div>foo</div>` }
-const Bar = { template: `<div>bar</div>` }
-const NotFound = { template: `<div>not found!</div>` }
+  const Foo = { template: `<div>foo</div>` }
+  const Bar = { template: `<div>bar</div>` }
+  const NotFound = { template: `<div>not found!</div>` }
 
-const routeTable = {
-  // Implement this!
-}
+  const routeTable = {
+    // Implement this!
+    foo: Foo,
+    bar: Bar,
+    notfound: NotFound
+  }
 
-window.addEventListener('hashchange', () => {
-  // Implement this!
-})
+  window.addEventListener('hashchange', () => {
+    // Implement this!
+    let key = window.location.hash.slice(1)
+    console.log(key)
+    app.matchedComponent = key
+  })
 
-const app = new Vue({
-  el: '#app',
-  // Implement this!
-})
+  const app = new Vue({
+    el: '#app',
+    // Implement this!
+    data: {
+      matchedComponent: window.location.hash.slice(1)
+    },
+    render(h) {
+      return h('div', [
+        h(routeTable[this.matchedComponent] || NotFound),
+        h('a', { attrs: { href: '#foo' } }, 'foo'),
+        h('a', { attrs: { href: '#bar' } }, 'bar')
+      ])
+    }
+  })
 </script>
