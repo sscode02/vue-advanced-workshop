@@ -17,35 +17,61 @@
 </div>
 
 <script>
-const validationPlugin = {
-  // Implement this!
-}
+  const validationPlugin = {
+    // Implement this!
+    install(Vue) {
+      Vue.mixin({
+        computed: {
+          $v() {
+            let valid = true
+            const errors = []
+            const rules = this.$options.validations
 
-Vue.use(validationPlugin)
+            Object.keys(rules || {}).forEach(key => {
+              const rule = rules[key]
+              const value = this[key]
+              const result = rule.validate(value)
+              if (!result) {
+                valid = false
+                errors.push(rule.message(key, value))
+              }
+            })
 
-new Vue({
-  el: '#app',
-  data: {
-    text: 'foo',
-    email: ''
-  },
-  validations: {
-    text: {
-      validate: value => value.length >= 5,
-      message: (key, value) => `${key} should have a min length of 5, but got ${value.length}`
-    },
-    email: {
-      validate: value => /email/.test(value),
-      message: key => `${key} must be a valid email`
-    }
-  },
-  methods: {
-    validate (e) {
-      if (!this.$v.valid) {
-        e.preventDefault()
-        alert('not valid!')
-      }
+            return {
+              valid,
+              errors
+            }
+          }
+        }
+      })
     }
   }
-})
+
+  Vue.use(validationPlugin)
+
+  new Vue({
+    el: '#app',
+    data: {
+      text: 'foo',
+      email: ''
+    },
+    validations: {
+      text: {
+        validate: value => value.length >= 5,
+        message: (key, value) => `${key} should have a min length of 5, but got ${value.length}`
+      },
+      email: {
+        validate: value => /email/.test(value),
+        message: key => `${key} must be a valid email`
+      }
+    },
+    methods: {
+      validate(e) {
+        if (!this.$v.valid) {
+          e.preventDefault()
+          alert('not valid!')
+        }
+      }
+    }
+  })
 </script>
